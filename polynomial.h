@@ -232,8 +232,6 @@ public:
             std::cout << this->get_variables()[this->get_variables().size()-1].Name << "} " << std::endl;
         }
 
-        //this->group();
-
     // getting sorted index list
         int xi = this->get_xindex(x);
         std::vector<int> indices(Coefficients.size());
@@ -249,13 +247,6 @@ public:
             C[i] = Coefficients[indices[i]];
         }
         Coefficients = C;
-        
-        // for (int i = 0; i < Coefficients.size(); ++i) {
-        //     C[i] = Coefficients[i];
-        // }
-        // for (int i = 0; i < Coefficients.size(); ++i) {
-        //     Coefficients[i] = C[indices[i]];
-        // }
 
     // sorting Exponent vectors according to sorted index list
         std::vector<std::vector<unsigned> > E(Coefficients.size());
@@ -263,13 +254,6 @@ public:
             E[i] = Exponents[indices[i]];
         }
         Exponents = E;
-
-        // for (int i = 0; i < Coefficients.size(); ++i) {
-        //     E[i] = Exponents[i];
-        // }
-        // for (int i = 0; i < Coefficients.size(); ++i) {
-        //     Exponents[i] = E[indices[i]];
-        // }
     }
 
     void group() { //group similar monomials in Expr
@@ -350,11 +334,8 @@ public:
         // push back non-duplicate exponent vector and add coefficients for duplicate exponent vectors
         for (int i = 0; i < e1.Coefficients.size(); ++i) {
             for (int j = 0; j < e2.Coefficients.size(); ++j) {
-                //E.Coefficients.push_back(e1.Coefficients[i]*e2.Coefficients[j]);
                 coef.push_back(e1.Coefficients[i]*e2.Coefficients[j]);
-                //std::vector<int> eij = vecsum(e1.Exponents.at(i), e2.Exponents.at(j));
                 exp.push_back( vecsum(e1.Exponents[i], e2.Exponents[j]) );
-                //E.Exponents.push_back(eij);
             }
         }
         Expr E = Expr(e1.get_variables(), coef, exp);
@@ -420,7 +401,7 @@ bool equivalent(const Expr& e1, const Expr& e2) {
 
 std::map<unsigned, Expr> get_xcoeffs (Expr& e, const Var& x) {
     //each x-coefficient is an Expr without the variable x
-    //we look for all monomials with a certain x-degree and sum up the coefficients
+    //look for all monomials with a certain x-degree and sum up the coefficients
     int xdeg = e.get_xdegree(x);
     int xi = e.get_xindex(x);
     std::map<unsigned, Expr> m;
@@ -533,7 +514,6 @@ std::ostream &operator<<(std::ostream& os, const Expr& e) {
         else if (e.Coefficients[i+1] > 0)
             os << " + ";
     }
-
     return os;  
 }
 
@@ -559,16 +539,6 @@ Expr replace(Expr& e, const std::map<Var, Expr>& repl) {
 
 std::vector<Var> merge_var_mono(Monomial m1, Monomial m2) {
     std::vector<Var> V = m1.getvar();
-
-    // for (int i = 0; i < m2.getnumvar(); ++i) {
-    //     bool duplicate = false;
-    //     for (int j = 0; j < m1.getnumvar(); ++j) {
-    //         duplicate = (m1.getvar().at(j).getname() == m2.getvar().at(i).getname());
-    //         if (duplicate == true)
-    //             break;
-    //     }
-    //     if (duplicate == false)
-    //         V.push_back(m2.getvar().at(i));     
 
     for (auto& var2 : m2.getvar()) {
         bool isduplicate = false;
@@ -597,7 +567,6 @@ std::vector<Var> merge_var(const Expr e1, const Expr e2) {
         if (isduplicate == false)
             V.push_back(e2.get_variables()[i]);   
     }
-    //std::sort(V.begin(),V.end());
     return V;
 }
 
@@ -621,7 +590,6 @@ std::vector<std::vector<unsigned> > merge_var_exponents(const Expr e1, const Exp
                     break;
             }
             if (isduplicate == false) {
-                //for (int j = 0; j < e1.get_exponents().size(); ++j) 
                 for (auto& vec : E)
                     vec.push_back(0);  
             }
@@ -649,5 +617,3 @@ std::vector<int> mono_prod_exp(Monomial m1, Monomial m2) {
 
     return c;
 }
-
-
