@@ -361,23 +361,6 @@ public:
             return result;
         }
     }
-
-    void print() {
-        for (int i = 0; i < Coefficients.size()-1; ++i) {
-            std::cout << Coefficients[i] << "*";
-            for (int j = 0; j < Variables.size()-1; ++j) {
-                std::cout << Variables[j].Name << "^" << Exponents[i][j] << "*";  
-            }
-            std::cout << Variables[Variables.size()-1].Name << "^" << Exponents[i][Variables.size()-1];
-            std::cout <<  " + ";
-        }
-        std::cout << Coefficients[Coefficients.size()-1] << "*";
-        for (int j = 0; j < Variables.size()-1; ++j) {
-                std::cout << Variables[j].Name << "^" << Exponents[Coefficients.size()-1][j] << "*";  
-            }
-        std::cout << Variables[Variables.size()-1].Name << "^" << Exponents[Coefficients.size()-1][Variables.size()-1] << std::endl;
-    }
-
 };
 
 bool equivalent(const Expr& e1, const Expr& e2) {
