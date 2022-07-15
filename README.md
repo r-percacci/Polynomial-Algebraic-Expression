@@ -9,6 +9,23 @@ Requirements are to implement functions for:
 4. printing in a stream a polynomial
 5. testing whether two polynomials are equivalent
 
+
+## Var Class
+```cpp
+class Var {
+private:
+    std::string Name;
+    int Value;
+```
+A Var object consists of a Name and a Value. Although the Value member hasn't been used in the code, the initial idea was to provide a means of substituting variables with numerical values, a task more extendedly performed by 
+```cpp
+friend Expr replace(const Expr& e, const std::map<Var, Expr>& repl);
+```
+The Var Class also provides operators == and < for comparing Vars, and << for printing Vars.
+
+
+## Expr Class
+
 First off, a few methods and base utilities were implemented (, along with overloaded operators for sums, subtractions and products of polynomials,
 plus a function for raising a polynomial to powers of natural numbers.
 
@@ -22,6 +39,7 @@ private:
 ```
 Thus, the polynomial is given by a vector of variables, a vector of coefficients (as many as there are monomials), and a vector (of same size as Coefficients) of a vector of unsigned integers (of same size as Variables), containing the exponents of each variable in each monomial.
 In order to implement the required methods/friend functions, some preliminary functionality must be in place. 
+
 
 ## Public methods of class Expr:
 
@@ -76,6 +94,7 @@ Expr power(const unsigned p) const
 ```
 Raise an Expr to a natural power.
 
+
 ## Friend functions of class Expr:
 ```cpp
 friend std::vector<Var> merge_var(Expr e1, Expr e2);
@@ -95,6 +114,8 @@ friend std::map<unsigned, Expr> get_xcoeffs (Expr& e, const Var& x);
 ```cpp
 friend Expr replace(const Expr& e, const std::map<Var, Expr>& repl);
 ```
+Code for this function is quite short thanks to get_xcoeffs, which gives a map of x-coefficients by x-degrees, of the variable to be replaced, in the destinataion Expr. Replacements are then done one by one in a loop across the x-degrees. The same procedure is perforemd for all Vars in the repl map.
+
 ```cpp
 friend std::ostream &operator<<(std::ostream& os, const Expr& e);
 ```
