@@ -9,7 +9,6 @@ Requirements are to implement functions for:
 4. printing in a stream a polynomial
 5. testing whether two polynomials are equivalent
 
-
 ## Var Class
 ```cpp
 class Var {
@@ -17,7 +16,7 @@ private:
     std::string Name;
     int Value;
 ```
-A Var object consists of a Name and a Value. Although the Value member hasn't been used in the code, the initial idea was to provide a means of substituting variables with numerical values, a task more extendedly performed by 
+A Var (Variable) object consists of a Name and a Value. Although the Value member hasn't been used in the code, the initial idea was to provide a means of substituting variables with numerical values, a task more extendedly performed by 
 ```cpp
 friend Expr replace(const Expr& e, const std::map<Var, Expr>& repl);
 ```
@@ -25,9 +24,6 @@ The Var Class also provides operators == and < for comparing Vars, and << for pr
 
 
 ## Expr Class
-
-First off, a few methods and base utilities were implemented (, along with overloaded operators for sums, subtractions and products of polynomials,
-plus a function for raising a polynomial to powers of natural numbers.
 
 Private members of class Expr are:
 ```cpp
@@ -37,7 +33,9 @@ private:
     std::vector<int> Coefficients;
     std::vector<std::vector<unsigned> > Exponents;
 ```
-Thus, the polynomial is given by a vector of variables, a vector of coefficients (as many as there are monomials), and a vector (of same size as Coefficients) of a vector of unsigned integers (of same size as Variables), containing the exponents of each variable in each monomial.
+Thus, the polynomial is represented by a vector of variables, a vector of coefficients (as many as there are monomials), and a vector (of same size as Coefficients) of a vector of unsigned integers (of same size as Variables), containing the exponents of each variable in each monomial.
+It follows that in all instances, an Expr object will represent a polynomial in expanded form.
+
 In order to implement the required methods/friend functions, some preliminary functionality must be in place. 
 
 
@@ -114,11 +112,21 @@ friend std::map<unsigned, Expr> get_xcoeffs (Expr& e, const Var& x);
 ```cpp
 friend Expr replace(const Expr& e, const std::map<Var, Expr>& repl);
 ```
-Code for this function is quite short thanks to get_xcoeffs, which gives a map of x-coefficients by x-degrees, of the variable to be replaced, in the destinataion Expr. Replacements are then done one by one in a loop across the x-degrees. The same procedure is perforemd for all Vars in the repl map.
+Code for this function is quite short thanks to the get_xcoeffs function. The algorithm is roughly as follows:
+1. get_xcoefficients gives a map of x-coefficients by x-degrees, of the first variable to be replaced, in the destinataion Expr. 
+2. Replacements are then done one by one in a loop across the x-degrees, fetching the x-coefficients from the mapn. 
+3. The same procedure is performed for all Vars in the repl map. 
+
+Note that when more than one variable is to be replaced, the result depends on the ordering of the pairs in the repl map. That is because substitutions of variables are done sequentially rather than simultaneously.
 
 ```cpp
 friend std::ostream &operator<<(std::ostream& os, const Expr& e);
 ```
+Print an Expr in a stream.
 ```cpp
 friend bool equivalent(const Expr& e1, const Expr& e2);
 ```
+Also this function's body is quite short thanks to pre-existing funcionality. The algorithm is as follows:
+1. Both Expr are "normalized" by grouping together all similar monomials, and sorting variables. 
+2. A trivial case is tested, when the Variables vectors of the two Expr differ, in which case false is returned. 
+3. Otherwise, both polynomials are sorted according to the first variable's degree (same variable for both). It suffices then to check the equality of Coefficients vectors and Exponents vectors.
