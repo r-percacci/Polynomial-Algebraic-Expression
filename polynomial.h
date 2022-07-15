@@ -388,13 +388,13 @@ std::map<unsigned, Expr> get_xcoeffs (Expr& e, const Var& x) {
     int xdeg = e.get_xdegree(x);
     int xi = e.get_xindex(x);
     std::map<unsigned, Expr> m;
-    std::vector<Var> var = e.get_variables();
+    std::vector<Var> var = e.get_variables(); // variable vector for the x-coefficients (x is removed)
     var.erase(var.begin()+xi);
     //scanning across all degrees of x
     for (unsigned d = 0; d <= xdeg; ++d) {
         Expr expr_sum = Expr();
+        int match = 0; // keeps track of whether any monomial has d as x-degree
         //scanning across all monomials
-        int match = 0;
         for (int i = 0; i < e.get_coefficients().size(); ++i) {
             //check that x-degree matches d
             if (e.get_coefficients()[i] != 0 && e.get_exponents()[i][xi] == d) {
@@ -402,7 +402,7 @@ std::map<unsigned, Expr> get_xcoeffs (Expr& e, const Var& x) {
                 coef.push_back(e.get_coefficients()[i]);
                 std::vector<std::vector<unsigned> > exp;
                 exp.push_back(e.get_exponents()[i]);
-                exp.back().erase(exp.back().begin() + xi);
+                exp.back().erase(exp.back().begin() + xi); // erase x-exponent
                 //create x-coefficient for this monomial and sum it up
                 Expr expr = Expr(var, coef, exp);
                 expr_sum = expr_sum + expr;
@@ -432,16 +432,15 @@ std::ostream &operator<<(std::ostream& os, const Expr& e) {
         os << "- ";
 
     for (int i = 0; i < e.Coefficients.size(); ++i) {
-        if (i > 0) {
-            if (e.Coefficients[i-1] == 0) {
-                if (e.Coefficients[i] < 0)
-                os << " - ";
-                else if (e.Coefficients[i] > 0)
-                os << " + ";
-            }
+        if (i > 0 && e.Coefficients[i-1] == 0) {        
+            if (e.Coefficients[i] < 0)
+            os << " - ";
+            else if (e.Coefficients[i] > 0)
+            os << " + ";
         }
-        if (i == e.Coefficients.size()-1) { // last monomial, no operator at the end (duplicate code)
-                ////////////// Coefficient
+
+        if (i == e.Coefficients.size()-1) { // last monomial, no operator at the end
+            ////////////// Coefficient
             if (e.Coefficients[i] == 0) // don't write 0 coefficients
                 continue;
             if (e.Coefficients[i] != 1 && e.Coefficients[i] != -1) // write |coefficient| only if != +1 && != -1
@@ -468,7 +467,7 @@ std::ostream &operator<<(std::ostream& os, const Expr& e) {
         }
 
         ////////////// Coefficient
-        if (e.Coefficients[i] == 0) // don't write 0 coefficients
+        if (e.Coefficients[i] == 0) // don't print where null coefficients
             continue;
         if (e.Coefficients[i] != 1 && e.Coefficients[i] != -1) // write |coefficient| only if != +1 && != -1
                     os << abs(e.Coefficients[i]);
@@ -507,34 +506,22 @@ std::ostream &operator<<(std::ostream& os, const Var& v) {
 
 Expr replace(Expr& e, const std::map<Var, Expr>& repl) {
         Expr E = e;
-        Expr E0 = Expr();
-        for (auto sub : repl) {
+        for (auto& sub : repl) {
             std::map<unsigned, Expr> map = get_xcoeffs(E, sub.first); // coefficients of variable to replace
-            for (int i = 0; i <= e.get_xdegree(sub.first); ++i) { 
-                if (i == 0)
-                    E = E0 + map[i] * (sub.second.power(i));
+
+            std::vector<unsigned> key; // storing key values of map in a vector 
+            for(std::map<unsigned, Expr>::iterator it = map.begin(); it != map.end(); ++it) {
+                key.push_back(it->first);
+            }
+  
+            for (auto& i : key) {
+                if (i == key[0])
+                    E = map[i] * (sub.second.power(i));
                 else
                     E = E + map[i] * (sub.second.power(i));
             }
         }
         return E;
-    }
-
-std::vector<Var> merge_var_mono(Monomial m1, Monomial m2) {
-    std::vector<Var> V = m1.getvar();
-
-    for (auto& var2 : m2.getvar()) {
-        bool isduplicate = false;
-        for (auto& var1 : m1.getvar()) {
-            isduplicate = (var1.getname() == var2.getname());
-            if (isduplicate == true)
-                break;
-        }
-        if (isduplicate == false)
-            V.push_back(var2);   
-    }
-
-    return V;
 }
 
 std::vector<Var> merge_var(const Expr e1, const Expr e2) {
@@ -579,24 +566,4 @@ std::vector<std::vector<unsigned> > merge_var_exponents(const Expr e1, const Exp
         }
     }
     return E;
-}
-
-std::vector<int> mono_prod_exp(Monomial m1, Monomial m2) {
-
-    std::vector<int> c = m1.getexp();
-
-    for (int i = 0; i < m2.getnumvar(); ++i) {
-        bool duplicate = false;
-        for (int j = 0; j < m1.getnumvar(); ++j) {
-            duplicate = (m1.getvar().at(j).getname() == m2.getvar().at(i).getname());
-            if (duplicate == true) {
-                c.at(j) += m2.getexp().at(i);
-                break;
-            }
-        }
-        if (duplicate == false)
-            c.push_back(m2.getexp().at(i));     
-    }
-
-    return c;
 }

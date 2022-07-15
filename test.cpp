@@ -188,5 +188,21 @@ int main()  {
     Expr E = replace(E7, map2);
     cout << "in " << E7 << ": " << endl << E << endl;
 
+    Expr E6pow2 = E6.power(2);
+    map<Var, Expr> map3;
+    map3.insert(pair<Var, Expr>(x, E3));
+    Expr E11 = replace(E6pow2, map3);
+    cout << endl << "replace x with" << endl;
+    print_map(map3);
+    cout << "in " << E6pow2 << ": " << endl << E11 << endl;
+
+    map<Var, Expr> map4;
+    map4.insert(pair<Var, Expr>(x, E1));
+    cout << endl << "replace x with" << endl;
+    print_map(map4);
+    cout << "in " << E3 << ": " << endl << replace(E3, map4) << endl;
+
+
+
     return 0;
 }
