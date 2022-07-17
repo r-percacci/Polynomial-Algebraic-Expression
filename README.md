@@ -90,7 +90,7 @@ Multiply and Expr with another
 ```cpp
 Expr power(const unsigned p) const
 ```
-Raise an Expr to a natural power.
+Raise an Expr to the power of a natural power.
 
 
 ## Friend functions of class Expr:
