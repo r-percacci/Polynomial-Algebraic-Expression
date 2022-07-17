@@ -461,7 +461,8 @@ std::vector<Var> merge_var(const Expr e1, const Expr e2) {
     return V;
 }
 
-std::vector<std::vector<unsigned> > merge_var_exponents(const Expr e1, const Expr e2) { // returns vector of exponent vectors for e1 including e2's variables, same ordering as merge_var
+// returns vector of exponent vectors for e1 including e2's variables, in same order as merge_var
+std::vector<std::vector<unsigned> > merge_var_exponents(const Expr e1, const Expr e2) { 
     std::vector<std::vector<unsigned> > E = e1.get_exponents();
     if (e1.get_variables().size() == 0) {
         for (int i = 0; i < e1.get_coefficients().size(); ++i) {
