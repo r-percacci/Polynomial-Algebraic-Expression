@@ -39,78 +39,6 @@ public:
     friend class Expr;
 };
 
-class Monomial {
-
-private:
-    int N; // number of Variables
-    std::vector<Var> Variables; 
-    std::vector<int> Exponents;
-    int Coefficient;
-
-public:
-    void setnumvar(int n) {
-        N = n;
-    }
-    void setvar(std::vector<Var> v) {
-        Variables = v;
-    }
-    void setexp(std::vector<int> e) {
-        Exponents = e;
-    }
-    void setcoeff(int c) {
-        Coefficient = c;
-    }
-    int getnumvar() {
-        return N;
-    }
-    std::vector<Var> getvar() {
-        return Variables;
-    }
-    std::vector<int> getexp() {
-        return Exponents;
-    }
-    int getcoeff() {
-        return Coefficient;
-    }
-
-    Monomial();
-
-    Monomial(const Monomial& m) {
-        N = m.N;
-        Variables = m.Variables;
-        Exponents = m.Exponents;
-        Coefficient = m.Coefficient;
-    }
-
-    Monomial(int n, std::vector<Var> vars, std::vector<int> exp, int coef) {
-    N = n; // number of Variables
-    Variables = vars;
-    Exponents = exp;
-    Coefficient = coef;
-    }
-
-    friend std::vector<Var> merge_var_mono(Monomial m1, Monomial m2);
-    friend std::vector<int> mono_prod_exp(Monomial m1, Monomial m2);
-    friend class Expr;
-
-    Monomial operator*(const Monomial& m1) {
-        Monomial m2 = m1;
-        m2.Variables = merge_var_mono(*this, m1);
-        m2.N = m2.Variables.size();
-        m2.Exponents = mono_prod_exp(*this, m1);
-        m2.Coefficient = this->Coefficient * m1.Coefficient;
-        return m2;
-    }
-
-    void print() {
-        std::cout << Coefficient << "*";
-        for (int i = 0; i < N-1; ++i) {
-            std::cout << Variables[i].getname() << "^" << Exponents[i] << "*";
-        }
-        std::cout << Variables[N-1].getname() << "^" << Exponents[N-1];
-    }
-};
-
 class Expr {
 private:
     std::vector<Var> Variables;
@@ -162,7 +90,6 @@ public:
     int get_xindex(const Var x) {
         bool isvar = 0;
         try {
-            
             for (auto var : this->get_variables())
                 isvar += (x.Name == var.Name);
             if (isvar == 0) { 
@@ -452,12 +379,10 @@ std::ostream &operator<<(std::ostream& os, const Expr& e) {
                 if (expsum == 0)
                     os << "1";
             }
-            
             ////////////// Exponents
             for (int j = 0; j < e.Variables.size(); ++j) { // write variables with exponents for i-th monomial
                 if (e.Exponents[i][j] == 0)
                     continue;
-
                 if (e.Exponents[i][j] != 1) 
                     os  << e.Variables[j] << "^" << e.Exponents[i][j];
                 else
@@ -465,7 +390,6 @@ std::ostream &operator<<(std::ostream& os, const Expr& e) {
             }
             return os;
         }
-
         ////////////// Coefficient
         if (e.Coefficients[i] == 0) // don't print where null coefficients
             continue;
@@ -483,13 +407,11 @@ std::ostream &operator<<(std::ostream& os, const Expr& e) {
         for (int j = 0; j < e.Variables.size(); ++j) { // write variables with exponents for i-th monomial
             if (e.Exponents[i][j] == 0)
                 continue;
-
             if (e.Exponents[i][j] != 1) 
                 os  << e.Variables[j] << "^" << e.Exponents[i][j];
             else
                 os << e.Variables[j];
         }
-
         ////////////// Sign of next monomial
         if (e.Coefficients[i+1] < 0)
             os << " - ";
@@ -508,7 +430,6 @@ Expr replace(Expr& e, const std::map<Var, Expr>& repl) {
         Expr E = e;
         for (auto& sub : repl) {
             std::map<unsigned, Expr> map = get_xcoeffs(E, sub.first); // coefficients of variable to replace
-
             std::vector<unsigned> key; // storing key values of map in a vector 
             for(std::map<unsigned, Expr>::iterator it = map.begin(); it != map.end(); ++it) {
                 key.push_back(it->first);
