@@ -11,7 +11,6 @@ int main()  {
     
     // e = 1
     vector<Var> v1;
-    // v1.push_back(x);
     vector<int> c1;
     c1.push_back(1);
     vector<vector<unsigned> > e1;
@@ -132,6 +131,7 @@ int main()  {
     cout << "(" << E3 << ")" << " + " << "(" << E1 << ")" << " = " << E3 + E1 << endl;
     cout << "(" << E5 << ")" << " - " << "(" << E3 << ")" << " = " << E5 - E3 << endl;
     cout << "(" << E2 << ")" << " * " << "(" << E5 << ")" << " + " << "(" << E3 << ")" << " = " << E2 * E5 + E3 << endl;
+    cout << "(" << E1 << ")" << "^" << "0" << " = " << E1.power(0) << endl;  
     cout << "(" << E1 << ")" << "^" << "4" << " = " << E1.power(4) << endl;  
     cout << "(" << E1 << " + " << E1 << ")" << "^" << 4 << " = " << (E1 + E1).power(4) << endl;
     cout << "(" << E3 << ")" << "^" << "3" << " = " << E3.power(3) << endl;
@@ -195,14 +195,6 @@ int main()  {
     cout << endl << "replace x with" << endl;
     print_map(map3);
     cout << "in " << E6pow2 << ": " << endl << E11 << endl;
-
-    map<Var, Expr> map4;
-    map4.insert(pair<Var, Expr>(x, E1));
-    cout << endl << "replace x with" << endl;
-    print_map(map4);
-    cout << "in " << E3 << ": " << endl << replace(E3, map4) << endl;
-
-
 
     return 0;
 }

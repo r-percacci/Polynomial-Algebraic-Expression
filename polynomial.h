@@ -324,7 +324,7 @@ std::map<unsigned, Expr> get_xcoeffs (Expr& e, const Var& x) {
         //scanning across all monomials
         for (int i = 0; i < e.get_coefficients().size(); ++i) {
             //check that x-degree matches d
-            if (e.get_coefficients()[i] != 0 && e.get_exponents()[i][xi] == d) {
+            if (e.get_exponents()[i][xi] == d) {
                 std::vector<int> coef;
                 coef.push_back(e.get_coefficients()[i]);
                 std::vector<std::vector<unsigned> > exp;
@@ -434,7 +434,7 @@ Expr replace(Expr& e, const std::map<Var, Expr>& repl) {
             for(std::map<unsigned, Expr>::iterator it = map.begin(); it != map.end(); ++it) {
                 key.push_back(it->first);
             }
-  
+
             for (auto& i : key) {
                 if (i == key[0])
                     E = map[i] * (sub.second.power(i));
