@@ -9,6 +9,8 @@ Requirements are to implement functions for:
 4. printing in a stream a polynomial
 5. testing whether two polynomials are equivalent
 
+Compile and run "test.cpp" to view examples of the Class' functionalities.
+
 ## Var Class
 ```cpp
 class Var {
